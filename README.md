@@ -13,7 +13,7 @@ Principles
 * Fast generation
 
 Tags supported
----------------------
+--------------
 
 * @class
 * @constructor
@@ -24,11 +24,12 @@ Tags supported
 * @private
 
 Authors
------------
+-------
 
 Aleksis Brezas <abresas@kamibu.com>
 
 License
+-------
 
 (The MIT License)
 
