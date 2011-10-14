@@ -1,0 +1,67 @@
+#!/usr/bin/env node
+
+var cli = require( 'cli' ),
+    fs = require( 'fs' ),
+    jendoc = require( '../src/jendoc' );
+
+cli.setUsage( cli.app + ' [OPTIONS] PATH' );
+
+cli.parse( {
+    template: [ 't', 'Path to template directory', 'path', 'templates/default/' ],
+    caption: [ 'c', 'Documentation caption', 'string', 'Documentation' ],
+    output: [ 'o', 'Output directory', 'path', './' ],
+    progress: [ 'p', 'Enable progress bar', 'bool', false  ]
+} );
+
+cli.main( function( args, options ) {
+    if ( !this.argc ) {
+        console.error( 'No path given\n' );
+        cli.getUsage();
+        return;
+    }
+
+    options.path = args[ 0 ];
+
+    if ( !options.output ) {
+        console.error( 'No output directory given.' );
+        cli.getUsage();
+        return;
+    }
+
+    fs.stat( options.output, function( err, stats ) {
+        if ( err ) {
+            console.error( "No such file or directory: " + options.output );
+            process.stdout.write( "\n" );
+            cli.getUsage();
+            process.exit( 1 );
+        }
+        if ( !stats.isDirectory() ) {
+            console.error( options.output + ' is not a directory' );
+            process.stdout.write( "\n" );
+            cli.getUsage();
+            process.exit( 1 );
+        }
+
+        if ( options.output[ options.output.length - 1 ] != '/' ) {
+            options.output += '/';
+        }
+
+        var processedFiles = 0;
+        if ( options.progress ) {
+            cli.progress( 0 );
+        }
+
+        jendoc.generate( options.path, options.template, options.output,
+            function fileCallback( err, doc ) {
+                if ( err ) {
+                    console.error( 'Failed to write documentation. ' + err );
+                    return;
+                }
+                processedFiles++;
+                if ( options.progress ) {
+                    cli.progress( processedFiles / doc.totalFiles );
+                }
+            }
+        );
+    } );
+} );
