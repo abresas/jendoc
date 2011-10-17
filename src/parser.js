@@ -83,6 +83,7 @@ function parse( source ) {
                 if ( currentNode.blockLevel == 0 ) {
                     currentNode = contextStack.pop();
                     --i;
+                    continue;
                 }
                 --currentNode.blockLevel;
                 currentNode.source += '}';
@@ -121,7 +122,7 @@ function parse( source ) {
             continue;
         }
 
-        var m = /^this.([a-zA-Z0-9.]+)\s*(=|:)/.exec( rest );
+        var m = /^([a-zA-Z0-9.]+)\s*(=|:)/.exec( rest );
         if ( m ) {
             equalsIndex = source.indexOf( m[ 2 ], i );
 
@@ -192,7 +193,7 @@ function parse( source ) {
 
 function parseFile( path, callback ) {
     fs.readFile( path, 'utf8', function( err, data ) {
-        callback( parse( data ) );
+        callback( err, parse( data ) );
     } );
 }
 

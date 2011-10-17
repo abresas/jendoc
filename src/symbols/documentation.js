@@ -13,6 +13,15 @@ Documentation.prototype = {
     },
     hasClass: function( className ) {
         return this.classNames.indexOf( className ) != -1;
+    },
+    addClasses: function( tree ) {
+        var d = Documentation.createFromObjectTree( tree, this.title );
+        var classes = [];
+        for ( var i = 0; i < d.classes.length; ++i ) {
+            this.addClass( d.classes[ i ] );
+            classes.push( d.classes[ i ] );
+        }
+        return classes;
     }
 };
 

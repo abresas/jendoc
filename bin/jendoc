@@ -41,14 +41,19 @@ cli.main( function( args, options ) {
             cli.getUsage();
             process.exit( 1 );
         }
+    } );
+
+    // get file list for progression bar
+    jendoc.fstraverse.getFileList( options.path, function( err, files ) {
+        var totalFiles = files.length;
+        var processedFiles = 0;
+
+        if ( options.progress ) {
+            cli.progress( 0 );
+        }
 
         if ( options.output[ options.output.length - 1 ] != '/' ) {
             options.output += '/';
-        }
-
-        var processedFiles = 0;
-        if ( options.progress ) {
-            cli.progress( 0 );
         }
 
         jendoc.generate( options.path, options.template, options.output,
@@ -59,7 +64,7 @@ cli.main( function( args, options ) {
                 }
                 processedFiles++;
                 if ( options.progress ) {
-                    cli.progress( processedFiles / doc.totalFiles );
+                    cli.progress( processedFiles / totalFiles );
                 }
             }
         );

@@ -78,7 +78,7 @@ MethodDocumentation.createFromObjectNode = function( node ) {
                 doc.setVisibility( 'private' );
                 break;
             default:
-                console.error( 'unknown method tag named ' + tag.name + ' for methods. value: ' + tag.value + ' ' + node.name );
+                // console.error( 'unknown method tag named ' + tag.name + ' for methods. value: ' + tag.value + ' ' + node.name );
         }
     }
     return doc;
