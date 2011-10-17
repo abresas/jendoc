@@ -9,29 +9,31 @@ function generate( path, templateDir, outputDir, fileCallback, endCallback ) {
     fileCallback = fileCallback || function( err ) { if ( err ) { throw err; } };
     endCallback = endCallback || function( err ) { if ( err ) { throw err; } };
 
-    fstraverse.eachFile( path,
-        function each( err, file, stat ) {
-        },
-        function complete( err, files, stats ) {
-            var processed = 0;
-            for ( var i = 0; i < files.length; ++i ) {
-                var file = files[ i ];
-                generateFromFile( file, templateDir, outputDir, 
-                    function( err, doc ) {
-                        if ( err ) {
-                            return fileCallback( err );
-                        }
-                        doc.totalFiles = files.length;
-                        fileCallback( err, doc );
-                        ++processed;
-                        if ( processed == files.length ) {
-                            endCallback( null );
-                        }
-                    }
-                );
-            }
+    fstraverse.getFileList( path, function( err, files ) {
+        // console.log( files );
+        if ( err ) {
+            return endCallback( err );
         }
-    );
+
+        var processed = [];
+        for ( var i = 0; i < files.length; ++i ) {
+            var file = files[ i ];
+            generateFromFile( file, templateDir, outputDir, 
+                function( err, doc ) {
+                    if ( err ) {
+                        return fileCallback( err );
+                    }
+                    doc.totalFiles = files.length;
+                    fileCallback( err, doc );
+                    processed.push( file );
+                    // console.log( 'gen ' + processed.length + ' ' + files.length + ' ' + file );
+                    if ( processed.length == files.length ) {
+                        endCallback( null );
+                    }
+                }
+            );
+        }
+    } );
 }
 
 function generateFromFile( path, templateDir, outputDir, callback ) {
@@ -40,36 +42,36 @@ function generateFromFile( path, templateDir, outputDir, callback ) {
     } );
 }
 
-function generateFromSource( source, templateDir, outputDir, endCallback ) {
+function generateFromSource( source, templateDir, outputDir, callback ) {
     if ( !templateDir ) {
         throw 'please specify documentation template';
     }
 
     var objectTree = parser.parse( source )
-    doc = Documentation.createFromObjectTree( objectTree );
+    var doc = Documentation.createFromObjectTree( objectTree );
 
     doc.classesWaiting = doc.classes.length;
 
+    // console.log( 'classes length: ' + doc.classes.length );
+
     for ( var i = 0; i < doc.classes.length; ++i ) {
         var classDoc = doc.classes[ i ];
-        ( function( classDoc ) {
-            template.renderToFile( templateDir + "/class.html", { classDoc: classDoc, doc: doc }, outputDir + classDoc.name + ".html",
-                function( err, html ) {
-                    if ( err ) {
-                        return endCallback( err, doc );
-                    }
-                    --doc.classesWaiting;
-                    if ( !doc.classesWaiting ) {
-                        endCallback( null, doc );
-                    }
+        template.renderToFile( templateDir + "/class.html", { classDoc: classDoc, doc: doc }, outputDir + classDoc.name + ".html",
+            function( err, html ) {
+                if ( err ) {
+                    return callback( err, doc );
                 }
-            );
-        }( classDoc ) );
+                --doc.classesWaiting;
+                if ( !doc.classesWaiting ) {
+                    callback( null, doc );
+                }
+            }
+        );
         // template.render( template + "/class.html", { classDoc: classDoc, doc: doc }, callback );
     }
 
-    if ( !doc.totalClasses ) {
-        endCallback( null, doc );
+    if ( !doc.classesWaiting ) {
+        callback( null, doc );
     }
 }
 

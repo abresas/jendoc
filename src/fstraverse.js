@@ -71,7 +71,7 @@ var eachFile = function(path, callback, completeHandler) {
   });
 };
 
-var allFileContents = function( path, callback ) {
+function allFileContents( path, callback ) {
     var filesRead = [];
     var allFiles = null;
     var contents = "";
@@ -113,6 +113,17 @@ var allFileContents = function( path, callback ) {
     } );
 }
 
+function getFileList( path, callback ) {
+    eachFile( path,
+        function( err, file ) {
+        },
+        function( err, files, stats ) {
+            callback( err, files );         
+        }
+    );
+}
+
 exports.eachFileOrDirectory = eachFileOrDirectory;
 exports.eachFile = eachFile;
 exports.allFileContents = allFileContents;
+exports.getFileList = getFileList;
