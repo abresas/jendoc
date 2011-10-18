@@ -1,5 +1,5 @@
 var fs = require( 'fs' ),
-    parrot = require( 'parrot' );
+    parrot = require( '../libs/parrot' );
 
 var sandboxBase = {
     isBuiltin: function( name ) {
