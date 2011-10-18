@@ -17,11 +17,12 @@ Installation
 
 To install from npm:
 
-$ npm install jendoc
+    $ npm install jendoc
 
 You will also need the templates folder. You can copy them from npm installation directory or download them from github:
-$ wget https://github.com/downloads/kamibu/jendoc/templates.tar.gz
-$ tar -xvzf templates.tar.gz
+
+    $ wget https://github.com/downloads/kamibu/jendoc/templates.tar.gz
+    $ tar -xvzf templates.tar.gz
 
 Tags supported
 --------------
