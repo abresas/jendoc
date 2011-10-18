@@ -6,6 +6,22 @@ function parse( source ) {
     var objectTree = new ObjectTree();
     var currentNode = objectTree;
     var contextStack = [ objectTree ];
+
+    function addToTree( node, parentNode ) {
+        if ( !( currentNode.children.length == 1 && currentNode.isDocumented ) && ( node.type == 'property' || node.type == 'method' ) ) {
+            var prevSibling = currentNode.children[ currentNode.children.length - 1 ];
+            if ( !prevSibling ) {
+                return;
+            }
+            if ( prevSibling.type == 'comment' && prevSibling.isDoc ) {
+                node.isDocumented = true;
+                node.appendChild( prevSibling );
+            }
+        }
+        
+        parentNode.appendChild( node );
+    }
+
     for ( var i = 0; i < source.length; ++i ) {
         if ( currentNode.type == 'comment' && currentNode.commentType == 'singleline' ) {
             if ( source[ i ] == '\n' ) {
@@ -56,7 +72,7 @@ function parse( source ) {
             var commentNode = new ObjectNode( 'comment' );
             commentNode.commentType = 'singleline';
             commentNode.source = '//';
-            currentNode.appendChild( commentNode );
+            addToTree( commentNode, currentNode );
             contextStack.push( currentNode );
             currentNode = commentNode;
             ++i;
@@ -67,7 +83,7 @@ function parse( source ) {
             commentNode.commentType = 'multiline';
             commentNode.source = '/*';
             commentNode.tags = [];
-            currentNode.appendChild( commentNode );
+            addToTree( commentNode, currentNode );
             contextStack.push( currentNode );
             currentNode = commentNode;
             ++i;
@@ -103,9 +119,13 @@ function parse( source ) {
 
         var rest = source.slice( i );
 
-        var functionMatch = /^\s*(([a-zA-Z0-9]*\s*)(\=|:)\s*)?\s*function\s*([a-zA-Z0-9]*)?\s*\([^)]*\)/.exec( rest );
+        var functionMatch = /^\s*(([a-zA-Z0-9._]*\s*)(\=|:)\s*)?\s*function\s*([a-zA-Z0-9]*)?\s*\([^)]*\)/.exec( rest );
         if ( functionMatch && ( functionMatch[ 4 ] || functionMatch[ 2 ] ) ) {
-            var methodName = functionMatch[ 4 ] ? functionMatch[ 4 ] : functionMatch[ 2 ];
+            var lparts;
+            if ( functionMatch[ 2 ] ) {
+                lparts = functionMatch[ 2 ].split( '.' );
+            } 
+            var methodName = functionMatch[ 4 ] ? functionMatch[ 4 ] : lparts[ lparts.length - 1 ];
             methodName = methodName.trim();
 
             var methodNode = new ObjectNode( 'method' );
@@ -114,15 +134,48 @@ function parse( source ) {
             methodNode.source = source.slice( i, source.indexOf( '{', i ) );
             methodNode.blockLevel = 0;
 
-            currentNode.appendChild( methodNode );
-            contextStack.push( currentNode );
-            currentNode = methodNode;
+            var parentNode = currentNode;
+            var parentFound = true;
+
+            if ( functionMatch[ 3 ] == ":" || !lparts ) {
+                parentNode = currentNode;    
+            }
+            else if ( lparts.length > 1 ) {
+                for ( var j = 0; j < lparts.length; ++j ) {
+                    if ( j == lparts.length - 1 ) {
+                        break;
+                    }
+                    var varname = lparts[ j ];
+                    if ( j == 0 && varname == "this" ) {
+                        parentNode = currentNode;
+                        continue;
+                    }
+                    // else
+                    var p = parentNode.getChild( varname );
+                    if ( p ) {
+                        parentNode = p;
+                    }
+                    else {
+                        parentFound = false;
+                        break;
+                    }
+                }
+            }
+
+            if ( parentFound ) {
+                addToTree( methodNode, parentNode );
+                contextStack.push( currentNode );
+                currentNode = methodNode;
+            }
+            else {
+                currentNode.source += source.slice( i, equalsIndex + 1 );
+            }
 
             i = source.indexOf( '{', i ) - 1;
             continue;
         }
 
-        var m = /^([a-zA-Z0-9.]+)\s*(=|:)/.exec( rest );
+        var m = /^([a-zA-Z0-9._]+)\s*(=|:)/.exec( rest );
         if ( m ) {
             equalsIndex = source.indexOf( m[ 2 ], i );
 
@@ -173,7 +226,7 @@ function parse( source ) {
             }
 
             if ( parentFound ) {
-                parentNode.appendChild( propertyNode );
+                addToTree( propertyNode, parentNode );
                 contextStack.push( currentNode );
                 currentNode = propertyNode;
             }

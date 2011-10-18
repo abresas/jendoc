@@ -64,15 +64,10 @@
         }
         pre {
             display: block;
-            /*
-            font-family: courier new;
-            background-color: #f6f6f6;
-            border-radius: 5px;
-            border: 1px solid #e6e6e6;
-            */
-            padding: 5px 5px 5px 40px;
+            padding: 5px 5px 0px 40px;
             width: 700px;
-            margin-top: 10px;
+            margin-top: 5px;
+            margin-bottom: 5px;
         }
         div.constructor {
             font-weight: bold;
@@ -93,7 +88,7 @@
         h3 {
             /* font-family: 'Ardana', sans; */
             font-family: 'Droid Sans', sans-serif;
-            margin-bottom: 0px;
+            margin-bottom: 2px;
             color: black;
             font-weight: normal;
             font-size: 12pt;
@@ -143,7 +138,11 @@
         <h2>Properties</h2>
         <dl class="summary">
             <% classDoc.properties.forEach( function( property ) { %>
-            <dt><a href="<%= property.type %>.html"><%= property.type %></a></dt>
+            <dt>
+            <% property.specifiers.forEach( function( specifier ) { %>
+            <span class="keyword"><%= specifier %></span> 
+            <% } ); %>
+            <a href="<%= property.type %>.html"><%= property.type %></a></dt>
             <dd class="name"><a class="hidden" href="#<%= property.name %>"><%= property.name %></a></dd>
             <% } ); %>
         </dl>
@@ -188,7 +187,11 @@
         <ul class="description">
             <% classDoc.properties.forEach( function( property ) { %>
             <a name="<%= property.name %>"></a>
-            <li><h3><a href="<%= property.type %>.html"><%= property.type %></a> <span class="name"><%= property.name %></span><h3>
+            <li><h3>
+            <% property.specifiers.forEach( function( specifier ) { %>
+            <span class="keyword"><%= specifier %></span> 
+            <% } ); %>
+            <a href="<%= property.type %>.html"><%= property.type %></a> <span class="name"><%= property.name %></span><h3>
             <div class="description"><%= property.description %></div></li>
             <% } ); %>
         </ul>
@@ -202,12 +205,17 @@
                 <h3>
                     <% if ( methodDoc.isConstructor ) { %>
                     <span class="keyword">constructor</span>
-                    <% } else if ( methodDoc.returns == undefined ) { %>
-                    <span class="keyword">undefined</span>
-                    <% } else if ( isBuiltin( methodDoc.returns ) ) { %>
-                    <span class="builtin"><%= methodDoc.returns %></span>
                     <% } else { %>
-                    <a href="<%= methodDoc.returns %>.html"><%= methodDoc.returns %></a>
+                        <% methodDoc.specifiers.forEach( function( specifier ) { %>
+                        <span class="keyword"><%= specifier %></span> 
+                        <% } ); %>
+                        <% if ( methodDoc.returns == undefined ) { %>
+                        <span class="keyword">undefined</span>
+                        <% } else if ( isBuiltin( methodDoc.returns ) ) { %>
+                        <span class="builtin"><%= methodDoc.returns %></span>
+                        <% } else { %>
+                        <a href="<%= methodDoc.returns %>.html"><%= methodDoc.returns %></a>
+                        <% } %>
                     <% } %>
                     <span class="name"><%= methodDoc.name %></span><span class="argumentlist">(<% methodDoc.parameters.forEach( function( param, i ) { %><span class="builtin"> <%= param.type %></span> <%= param.name %><% if ( i != methodDoc.parameters.length - 1 ) { %>,<% } %> <% } ); %>)</span>
                 </h3>

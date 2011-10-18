@@ -52,7 +52,7 @@ MethodDocumentation.createFromObjectNode = function( node ) {
                 doc.setReturns( '' );
                 break;
             case 'description':
-                tag.value = tag.value.replace( /{@link (([a-zA-Z0-9]+)#([a-zA-Z0-9]+))}/g, "<a href=\"$1\">$2.$3</a>" );
+                tag.value = tag.value.replace( /{@link (([a-zA-Z0-9]+)#([a-zA-Z0-9]+))}/g, "<a href=\"$1\">$2.$3</a>" ).replace( /\{@link ([a-zA-Z0-9]+)\}/g, '<a href="#$1">$1</a>' );
                 var description = tag.value.trim();
                 doc.setDescription( description );
                 break;

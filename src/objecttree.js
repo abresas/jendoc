@@ -32,6 +32,7 @@ ObjectNode.prototype.appendChild = function( node ) {
     node.parentNode = this;
     node.level = this.level + 1;
 
+    /*
     if ( !( this.children.length == 2 && this.isDocumented ) && ( node.type == 'property' || node.type == 'method' ) ) {
         var prevSibling = this.children[ this.children.length - 2 ];
         if ( !prevSibling ) {
@@ -42,6 +43,7 @@ ObjectNode.prototype.appendChild = function( node ) {
             node.appendChild( prevSibling );
         }
     }
+    */
 };
 
 ObjectNode.prototype.removeChild = function( node ) {

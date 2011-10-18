@@ -10,18 +10,47 @@ function generate( path, templateDir, outputDir, fileCallback, endCallback ) {
     endCallback = endCallback || function( err ) { if ( err ) { throw err; } };
 
     var doc = new Documentation( 'Documentation' );
+    var fileQueue = [];
+
+    function fCallback( err, file ) {
+        fileCallback( err, file );
+
+        fileQueue.splice( fileQueue.indexOf( file ), 1 );
+        if ( fileQueue.length == 0 ) {
+            eCallback( err );
+        }
+    }
+
+    function eCallback( err ) {
+        doc.classes = doc.classes.sort( function( a, b ) {
+            if ( a.name > b.name ) {
+                return 1;
+            }
+            else if ( a.name < b.name ) {
+                return -1;
+            }
+            else {
+                return 0;
+            }
+        } );
+        template.renderToFile( templateDir + "/index.html", { doc: doc }, outputDir + "index.html", function( err ) {
+            endCallback( err, doc );
+        } );
+    }
 
     fstraverse.eachFile( path, 
         function( err, file ) {
+            fileQueue.push( file );
+
             if ( err ) {
-                return fileCallback( err, file );
+                return fCallback( err, file );
             }
 
             parser.parseFile( file, function( err, objectTree ) {
                 var classes = doc.addClasses( objectTree );
                 var classesProcessed = 0;
                 if ( !classes.length ) {
-                    return fileCallback( null, file );
+                    return fCallback( null, file );
                 }
                 classes.forEach( function( classDoc ) {
                     template.renderToFile( templateDir + "/class.html", { classDoc: classDoc, doc: doc }, outputDir + classDoc.name + ".html",
@@ -31,7 +60,7 @@ function generate( path, templateDir, outputDir, fileCallback, endCallback ) {
                             }
                             ++classesProcessed;
                             if ( classesProcessed == classes.length ) {
-                                fileCallback( null, file );
+                                fCallback( null, file );
                             }
                         }
                     );
@@ -39,10 +68,9 @@ function generate( path, templateDir, outputDir, fileCallback, endCallback ) {
             } );
         },
         function( err, files, stats ) {
-            doc.classes.sort( function( a, b ) { return a.name > b.name; } );
-            template.renderToFile( templateDir + "/index.html", { doc: doc }, outputDir + "index.html", function( err ) {
-                endCallback( err, doc );
-            } );
+            if ( fileQueue.length == 0 ) {
+                eCallback( err );
+            }
         }
     );
 }

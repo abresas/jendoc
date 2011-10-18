@@ -46,7 +46,7 @@ ClassDocumentation.createFromObjectNode = function( node ) {
             case 'class':
                 break;
             case 'description':
-                tag.value = tag.value.replace( /{@link (([a-zA-Z0-9]+)#([a-zA-Z0-9]+))}/g, "<a href=\"$1\">$2.$3</a>" );
+                tag.value = tag.value.replace( /{@link (([a-zA-Z0-9]+)#([a-zA-Z0-9]+))}/g, "<a href=\"$1\">$2.$3</a>" ).replace( /\{@link ([a-zA-Z0-9]+)\}/g, '<a href="#$1">$1</a>' );
                 var lines = tag.value.split( '\n' );
                 var shortDescription = lines[ 0 ]; 
                 var detailedDescription = lines.slice( 1 ).join( '\n' ).trim();
@@ -61,11 +61,14 @@ ClassDocumentation.createFromObjectNode = function( node ) {
         var member = node.children[ j ];
         if ( member.isDocumented && member.type == 'method' ) {
             //console.log( 'got method', member.name );
-            classDoc.methods.push( MethodDocumentation.createFromObjectNode( member ) );    
+            var methodDoc = MethodDocumentation.createFromObjectNode( member );
+            methodDoc.addSpecifier( 'static' );
+            classDoc.methods.push( methodDoc );    
         }
         if ( member.isDocumented && member.type == 'property' ) {
             // console.log( 'got method', member.name );
-            classDoc.properties.push( PropertyDocumentation.createFromObjectNode( member ) );    
+            var propDoc = PropertyDocumentation.createFromObjectNode( member ) 
+            classDoc.properties.push( propDoc );
         }
         if ( member.name == 'prototype' ) {
             // console.log( 'got prototype' );
