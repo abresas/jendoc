@@ -6,6 +6,7 @@
     "version": "0.1.0",
     "main": "./src/jendoc.js",
     "bin": "./bin/jendoc",
+    "preferGlobal": true,
     "dependencies": {
         "cli": ">=0.3.8",
         "parrot": ">=0.3.0"
