@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title><%= doc.title %></title>
+        <link href='http://fonts.googleapis.com/css?family=Droid+Sans|Andada' rel='stylesheet' type='text/css' />
+        <script type="text/javascript" src="http://shjs.sourceforge.net/sh_main.min.js"></script>
+        <link href="sh_nedit.css" rel="stylesheet" type="text/css" />
+        <style>
+        body {
+            /* font-family: 'Lucida Sans Unipre', 'Lucida Grande', sans-serif; */
+            font-family: 'Droid Sans', sans-serif;
+            font-size: 10pt;
+            padding: 0 50px 0 50px;
+            width: 800px;
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Andada', sans-serif;
+            font-weight: normal;
+        }
+        h1 {
+            color: green;
+        }
+        dl.summary {
+            list-style-type: none;
+            background-color: #f6f6f6;
+            border-radius: 5px;
+            border: 1px solid #e6e6e6;
+            padding: 5px 5px 5px 50px;
+            width: 700px;
+        }
+        dl.summary dt {
+            float: left;
+            clear: left;
+            text-align: right;
+            width: 100px;
+        }
+        dl.summary dd {
+            margin-left: 100px;
+            padding-left: 5px;
+            min-height: 20px;
+        }
+        dl.summary dd.name {
+        }
+        </style>
+    </head>
+    <body>
+        <h1><%= doc.title %></h1>
+
+        <dl class="summary">
+            <% doc.classes.forEach( function( classDoc ) { %>
+            <dt><a href="<%= classDoc.name %>.html"><%= classDoc.name %></a></dt>
+            <dd><%= classDoc.shortDescription %></dd>
+            <% } ); %>
+        </dl>
+    </body>
+</html>

@@ -9,7 +9,7 @@ function generate( path, templateDir, outputDir, fileCallback, endCallback ) {
     fileCallback = fileCallback || function( err ) { if ( err ) { throw err; } };
     endCallback = endCallback || function( err ) { if ( err ) { throw err; } };
 
-    var doc = new Documentation();
+    var doc = new Documentation( 'Documentation' );
 
     fstraverse.eachFile( path, 
         function( err, file ) {
@@ -39,7 +39,10 @@ function generate( path, templateDir, outputDir, fileCallback, endCallback ) {
             } );
         },
         function( err, files, stats ) {
-            endCallback( err, doc );
+            doc.classes.sort( function( a, b ) { return a.name > b.name; } );
+            template.renderToFile( templateDir + "/index.html", { doc: doc }, outputDir + "index.html", function( err ) {
+                endCallback( err, doc );
+            } );
         }
     );
 }

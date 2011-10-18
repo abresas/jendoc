@@ -56,6 +56,8 @@ cli.main( function( args, options ) {
             options.output += '/';
         }
 
+        // console.log( 'total files: ' + files.length );
+
         jendoc.generate( options.path, options.template, options.output,
             function fileCallback( err, doc ) {
                 if ( err ) {
@@ -64,8 +66,15 @@ cli.main( function( args, options ) {
                 }
                 processedFiles++;
                 if ( options.progress ) {
-                    cli.progress( processedFiles / totalFiles );
+                    cli.progress( processedFiles / ( totalFiles + 1 ) ); // +1 for doc index
                 }
+            },
+            function endCallback( err, doc ) {
+                if ( err ) {
+                    console.error( 'Failed to write documentation. ' + err );
+                    return;
+                }
+                cli.progress( 1 );
             }
         );
     } );
