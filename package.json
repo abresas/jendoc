@@ -1,0 +1,13 @@
+{
+    "name": "jendoc",
+    "description": "Javascript documentation generator",
+    "keywords": [ "documentation" ],
+    "author": "Aleksis Brezas <abresas@kamibu.com>",
+    "version": "0.1.0",
+    "main": "./src/jendoc.js",
+    "bin": "./bin/jendoc",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:kamibu/jendoc.git"
+    }
+}
