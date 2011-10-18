@@ -6,6 +6,10 @@
     "version": "0.1.0",
     "main": "./src/jendoc.js",
     "bin": "./bin/jendoc",
+    "dependencies": {
+        "cli": ">=0.3.8",
+        "parrot": ">=0.3.0"
+    },
     "repository": {
         "type": "git",
         "url": "git@github.com:kamibu/jendoc.git"
