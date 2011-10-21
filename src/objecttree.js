@@ -1,10 +1,11 @@
-function ObjectNode( type ) {
+function ObjectNode( type, name ) {
     this.type = type;
     this.source = "";
     this.children = [];
     this.parentNode = null;
     this.level = 0;
     this.isDocumented = false;
+    this.name = name;
 }
 
 ObjectNode.prototype.toString = function() {

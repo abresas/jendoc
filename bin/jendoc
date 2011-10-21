@@ -55,6 +55,10 @@ cli.main( function( args, options ) {
         if ( options.output[ options.output.length - 1 ] != '/' ) {
             options.output += '/';
         }
+        
+        if ( files.indexOf( options.path ) == -1 && options.path[ options.path.length - 1 ] != '/' ) {
+            options.path += '/';
+        }
 
         // console.log( 'total files: ' + files.length );
 

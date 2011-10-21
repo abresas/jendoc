@@ -22,6 +22,32 @@ Documentation.prototype = {
             classes.push( d.classes[ i ] );
         }
         return classes;
+    },
+    classesByDirectory: function() {
+        var directories = [];
+        var directoryNames = [];
+        for ( var i = 0; i < this.classes.length; ++i ) {
+            var classDoc = this.classes[ i ];
+            var directory = classDoc.directory;
+            var directoryIndex = directoryNames.indexOf( directory )
+            if ( directoryIndex == -1 ) {
+                directories.push( { name: directory, classes: [ classDoc ] } );
+                directoryNames.push( directory );
+            }
+            else {
+                directories[ directoryIndex ].classes.push( classDoc );
+            }
+        }
+        directories.sort( function( a, b ) {
+            if ( a.name > b.name ) {
+                return 1;
+            }
+            else if ( a.name < b.name ) {
+                return -1;
+            }
+            return 0;
+        } );
+        return directories;
     }
 };
 

@@ -134,7 +134,7 @@ function parse( source ) {
             methodNode.source = source.slice( i, source.indexOf( '{', i ) );
             methodNode.blockLevel = 0;
 
-            var parentNode = currentNode;
+            var parentNode = objectTree;
             var parentFound = true;
 
             if ( functionMatch[ 3 ] == ":" || !lparts ) {
@@ -146,7 +146,7 @@ function parse( source ) {
                         break;
                     }
                     var varname = lparts[ j ];
-                    if ( j == 0 && varname == "this" ) {
+                    if ( varname == "this" ) {
                         parentNode = currentNode;
                         continue;
                     }
@@ -166,6 +166,8 @@ function parse( source ) {
                 addToTree( methodNode, parentNode );
                 contextStack.push( currentNode );
                 currentNode = methodNode;
+                
+                methodNode.appendChild( new ObjectNode( 'property', 'prototype' ) );
             }
             else {
                 currentNode.source += source.slice( i, equalsIndex + 1 );
@@ -209,7 +211,7 @@ function parse( source ) {
                         break;
                     }
                     var varname = lparts[ j ];
-                    if ( j == 0 && varname == "this" ) {
+                    if ( varname == "this" ) {
                         parentNode = currentNode;
                         continue;
                     }

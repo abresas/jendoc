@@ -162,7 +162,14 @@ exports.render = function(data, config, onprint) {
 		.replace(new RegExp('\t', ['g', 'm']), '\\t');
 
 	// Execute the script, rendering the template
-	Script.runInNewContext(data, config.sandbox);
+    try {
+        Script.runInNewContext(data, config.sandbox);
+    }
+    catch ( e ) {
+        console.log( data );
+        throw e;
+    }
+
 
 	// If we have a valid cache amount
 	if (config.cache > 0) {

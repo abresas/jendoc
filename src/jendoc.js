@@ -40,6 +40,20 @@ function generate( path, templateDir, outputDir, fileCallback, endCallback ) {
 
     fstraverse.eachFile( path, 
         function( err, file ) {
+            var filePath, dir;
+
+            if ( file != path ) {
+                filePath = file.slice( path.length );
+            }
+            else {
+                filePath = file;
+            }
+
+            var dir = filePath.slice( 0, filePath.indexOf( "/", 1 ) );
+            if ( filePath.indexOf( "/" ) == -1 ) {
+                dir = "";
+            }
+
             fileQueue.push( file );
 
             if ( err ) {
@@ -53,6 +67,8 @@ function generate( path, templateDir, outputDir, fileCallback, endCallback ) {
                     return fCallback( null, file );
                 }
                 classes.forEach( function( classDoc ) {
+                    classDoc.file = file;
+                    classDoc.directory = dir;
                     template.renderToFile( templateDir + "/class.html", { classDoc: classDoc, doc: doc }, outputDir + classDoc.name + ".html",
                         function( err, html ) {
                             if ( err ) {
