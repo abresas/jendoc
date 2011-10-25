@@ -3,8 +3,8 @@
     <head>
         <title><%= classDoc.name %> - <%= doc.title %></title>
         <link href='http://fonts.googleapis.com/css?family=Droid+Sans|Andada' rel='stylesheet' type='text/css' />
-        <script type="text/javascript" src="http://shjs.sourceforge.net/sh_main.min.js"></script>
-        <link href="sh_nedit.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="http://shjs.sourceforge.net/sh_main.js"></script>
+        <link href="template/sh_nedit.css" rel="stylesheet" type="text/css" />
         <style>
         body {
             /* font-family: 'Lucida Sans Unipre', 'Lucida Grande', sans-serif; */
@@ -123,7 +123,7 @@
         }
         </style>
     </head>
-    <body onload="sh_highlightDocument( 'lang/', '.js' )">
+    <body onload="sh_highlightDocument( 'template/', '.js' )">
         <a href="index.html">Back</a>
         <header>
             <h1><%= classDoc.name %></h1>

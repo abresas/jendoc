@@ -5,6 +5,14 @@ var parser = require( './parser' ),
     fstraverse = require( './fstraverse' ),
     fs = require( 'fs' );
 
+/**
+ * Generate documentation
+ * @param {String} path
+ * @param {String} templateDir
+ * @param {String} outputDir
+ * @param {Function} [fileCallback]
+ * @param {Function} [endCallback]
+ */
 function generate( path, templateDir, outputDir, fileCallback, endCallback ) {
     fileCallback = fileCallback || function( err ) { if ( err ) { throw err; } };
     endCallback = endCallback || function( err ) { if ( err ) { throw err; } };
